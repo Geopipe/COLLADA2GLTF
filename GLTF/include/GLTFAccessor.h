@@ -1,3 +1,4 @@
+// Copyright 2020 The Khronos® Group Inc.
 #pragma once
 
 #include <string>
@@ -7,62 +8,44 @@
 #include "GLTFObject.h"
 
 namespace GLTF {
-	class Accessor : public GLTF::Object {
-	public:
-		enum class Type {
-			SCALAR,
-			VEC2,
-			VEC3,
-			VEC4,
-			MAT2,
-			MAT3,
-			MAT4,
-			UNKNOWN
-		};
+class Accessor : public GLTF::Object {
+ public:
+  enum class Type { SCALAR, VEC2, VEC3, VEC4, MAT2, MAT3, MAT4, UNKNOWN };
 
-		GLTF::BufferView* bufferView = NULL;
-		int byteOffset = 0;
-		GLTF::Constants::WebGL componentType;
-		int count = 0;
-		float* max = NULL;
-		float* min = NULL;
-		Type type = Type::UNKNOWN;
+  GLTF::BufferView* bufferView = NULL;
+  int byteOffset = 0;
+  GLTF::Constants::WebGL componentType;
+  int count = 0;
+  float* max = NULL;
+  float* min = NULL;
+  Type type = Type::UNKNOWN;
 
-		Accessor(GLTF::Accessor::Type type, GLTF::Constants::WebGL componentType);
+  Accessor(GLTF::Accessor::Type type, GLTF::Constants::WebGL componentType);
 
-		Accessor(GLTF::Accessor::Type type,
-			GLTF::Constants::WebGL componentType,
-			unsigned char* data,
-			int count,
-			GLTF::Constants::WebGL target
-		);
+  Accessor(GLTF::Accessor::Type type, GLTF::Constants::WebGL componentType,
+           unsigned char* data, int count, GLTF::Constants::WebGL target);
 
-		Accessor(GLTF::Accessor::Type type,
-			GLTF::Constants::WebGL componentType,
-			unsigned char* data,
-			int count,
-			GLTF::BufferView* bufferView
-		);
+  Accessor(GLTF::Accessor::Type type, GLTF::Constants::WebGL componentType,
+           unsigned char* data, int count, GLTF::BufferView* bufferView);
 
-		Accessor(GLTF::Accessor::Type type,
-			GLTF::Constants::WebGL componentType,
-			int byteOffset,
-			int count,
-			GLTF::BufferView* bufferView
-		);
+  Accessor(GLTF::Accessor::Type type, GLTF::Constants::WebGL componentType,
+           int byteOffset, int count, GLTF::BufferView* bufferView);
 
-		static int getComponentByteLength(GLTF::Constants::WebGL componentType);
-		static int getNumberOfComponents(GLTF::Accessor::Type type);
+  explicit Accessor(GLTF::Accessor* accessor);
 
-		bool computeMinMax();
-		int getByteStride();
-		bool getComponentAtIndex(int index, float *component);
-		bool writeComponentAtIndex(int index, float* component);
-		int getComponentByteLength();
-		int getNumberOfComponents();
-		bool equals(GLTF::Accessor* accessor);
-		const char* getTypeName();
+  static int getComponentByteLength(GLTF::Constants::WebGL componentType);
+  static int getNumberOfComponents(GLTF::Accessor::Type type);
 
-		virtual void writeJSON(void* writer, GLTF::Options* options);
-	};
+  bool computeMinMax();
+  int getByteStride();
+  bool getComponentAtIndex(int index, float* component);
+  bool writeComponentAtIndex(int index, float* component);
+  int getComponentByteLength();
+  int getNumberOfComponents();
+  bool equals(GLTF::Accessor* accessor);
+  const char* getTypeName();
+
+  virtual std::string typeName();
+  virtual void writeJSON(void* writer, GLTF::Options* options);
 };
+}  // namespace GLTF

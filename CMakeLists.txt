@@ -7,15 +7,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(ExternalProject)
 
 project(${PROJECT_NAME})
-if(MSVC)
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  add_compile_options(-lstdc++fs)
-endif()
 
 # cmake -Dtest=ON to build with tests
 option(test "Build all tests." OFF)
@@ -29,10 +20,18 @@ set(TEST_ENABLED ${test})
 set(test OFF)
 
 # RapidJSON
-include_directories(GLTF/dependencies/rapidjson/include)
+if(DEFINED RAPIDJSON_INCLUDE_DIR)
+  include_directories(${RAPIDJSON_INCLUDE_DIR})
+else()
+  include_directories(GLTF/dependencies/rapidjson/include)
+endif()
 
 # Draco
-include_directories(GLTF/dependencies/draco/src)
+if(DEFINED DRACO_INCLUDE_DIR)
+  include_directories(${DRACO_INCLUDE_DIR})
+else()
+  include_directories(GLTF/dependencies/draco/src)
+endif()
 
 # Pre-compiled
 if(precompiled MATCHES "X86")
@@ -103,6 +102,7 @@ if(NOT DEFINED COLLADA_LIBRARIES AND NOT DEFINED COLLADA_FRAMEWORK_LIBRARIES)
   include_directories(dependencies/OpenCOLLADA/OpenCOLLADA/COLLADABaseUtils/include)
   include_directories(dependencies/OpenCOLLADA/OpenCOLLADA/COLLADAFramework/include)
   include_directories(dependencies/OpenCOLLADA/OpenCOLLADA/GeneratedSaxParser/include)
+  include_directories(dependencies/OpenCOLLADA/OpenCOLLADA/Externals/pcre/include)
   if(NOT OpenCOLLADA)
     add_subdirectory(dependencies/OpenCOLLADA/modules/COLLADASaxFrameworkLoader)
     set(OpenCOLLADA COLLADASaxFrameworkLoader)
@@ -116,26 +116,19 @@ include_directories(include)
 file(GLOB LIB_HEADERS "include/*.h")
 set(LIB_SOURCES src/COLLADA2GLTFWriter.cpp src/COLLADA2GLTFExtrasHandler.cpp)
 add_library(${PROJECT_NAME} ${LIB_HEADERS} ${LIB_SOURCES})
-if(MSVC)
-   target_link_libraries(${PROJECT_NAME} GLTF ${OpenCOLLADA})
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-   target_link_libraries(${PROJECT_NAME} GLTF ${OpenCOLLADA} stdc++fs)
-endif()
+target_link_libraries(${PROJECT_NAME} GLTF ${OpenCOLLADA})
 
 # ahoy
 include_directories(dependencies/ahoy/include)
 add_subdirectory(dependencies/ahoy)
 
-add_executable(${PROJECT_NAME}-bin src/main.cpp)
-if(MSVC)
-   target_link_libraries(${PROJECT_NAME}-bin ${PROJECT_NAME} ahoy)
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-   target_link_libraries(${PROJECT_NAME}-bin ${PROJECT_NAME} ahoy stdc++fs)
+if(NOT NO_COLLADA2GLTF_BIN)
+  add_executable(${PROJECT_NAME}-bin src/main.cpp)
+  target_link_libraries(${PROJECT_NAME}-bin ${PROJECT_NAME} ahoy draco)
 endif()
 
-target_link_libraries(${PROJECT_NAME}-bin draco)
-
 if(TEST_ENABLED)
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   enable_testing()
 
   # gtest

@@ -3,4 +3,4 @@
 
 #include "gtest/gtest.h"
 
-class GLTFAccessorTest : public ::testing::Test {};
+class GLTFAssetTest : public ::testing::Test {};

@@ -3,21 +3,19 @@
 </p>
 
 # COLLADA2GLTF
-[![Build Status](https://travis-ci.org/KhronosGroup/COLLADA2GLTF.svg?branch=master)](https://travis-ci.org/KhronosGroup/COLLADA2GLTF)
-[![Build Status](https://ci.appveyor.com/api/projects/status/3xtpxjohflwd5t1p/branch/master)](https://ci.appveyor.com/project/Khronoswebmaster/collada2gltf/history)
+[![Build Status](https://github.com/KhronosGroup/COLLADA2GLTF/workflows/CI/badge.svg)](https://github.com/KhronosGroup/COLLADA2GLTF/actions?query=workflow%3ACI)
 
 # COLLADA to glTF converter
 
-A command-line tool to convert COLLADA (`.dae`) files to [glTF 2.0](https://github.com/KhronosGroup/glTF).
+A command-line tool to convert COLLADA (`.dae`) files to [glTF](https://github.com/KhronosGroup/glTF).
 
 ## Releases
 
-Compiled binaries for Windows and Linux can be found under [releases](https://github.com/lasalvavida/COLLADA2GLTF/releases). It is recommended to use the last versioned release
+Compiled binaries for Windows, MacOS, and Linux can be found under [releases](https://github.com/KhronosGroup/COLLADA2GLTF/releases). It is recommended to use the last versioned release
 
-A live build of the current master branch is available as [latest](https://github.com/lasalvavida/COLLADA2GLTF/releases/tag/latest).
-These binaries are updated whenever master changes, the build succeeds, and the tests pass. These binaries are bleeding-edge and are not guaranteed to be stable.
+## Compile from source
 
-## Compile from source 
+1. Clone repository
 
   ```bash
   git clone --recursive https://github.com/KhronosGroup/COLLADA2GLTF.git
@@ -64,6 +62,7 @@ COLLADA2GLTF[.exe] [input] [output] [options]
 | -t, --separateTextures | false | No | Output textures separately |
 | -b, --binary | false | No | Output Binary glTF |
 | -m, --materialsCommon | false | No | Output materials using the KHR_materials_common extension |
+| -v, --version | | No | glTF version to output (e.g. '1.0', '2.0') |
 | -d, --dracoCompression | false | No | Output meshes using Draco compression extension |
 | --qp | | No | Quantization bits used for position attributes in Draco compression extension |
 | --qn | | No | Quantization bits used for normal attributes in Draco compression extension |
@@ -73,3 +72,5 @@ COLLADA2GLTF[.exe] [input] [output] [options]
 | --metallicRoughnessTextures | | No | Paths to images to use as the PBR metallicRoughness textures |
 | --specularGlossiness | false | No | output PBR materials with the KHR_materials_pbrSpecularGlossiness extension |
 | --lockOcclusionMetallicRoughness | false | No | Set `metallicRoughnessTexture` to be the same as the `occlusionTexture` in materials where an ambient texture is defined |
+| --doubleSided | false | No | Force all materials to be double sided. When this value is true, back-face culling is disabled and double sided lighting is enabled |
+| --preserveUnusedSemantics | false | No | Don't optimize out primitive semantics and their data, even if they aren't used. |
